@@ -84,7 +84,7 @@
         if (defaultMode) VisualEffects.setLighting(defaultMode);
     }
 
-    function buildScenes() {
+        function buildScenes() {
         if (!elements.sceneContainer) return;
         elements.sceneContainer.innerHTML = '';
         state.scenes = [];
@@ -102,7 +102,23 @@
 
         (CONFIG.countries || []).forEach(country => {
             const total = country.scenes?.length || 0;
+            
             (country.scenes || []).forEach((sceneData, index) => {
+                
+                // ========================================================
+                // تعديل جديد: تشغيل الصوت تلقائياً لأول مشهد في الدولة
+                // ========================================================
+                if (index === 0) {
+                    // بنشوف الميديا فين (سواء كانت أوبجكت عادي أو مصفوفة)
+                    let m = Array.isArray(sceneData.media) ? sceneData.media[0] : sceneData.media;
+                    
+                    // لو النوع فيديو، نلغي الميوت
+                    if (m && m.type === 'video') {
+                        m.muted = false; 
+                    }
+                }
+                // ========================================================
+
                 const enriched = {
                     ...sceneData,
                     countryId: country.id,
