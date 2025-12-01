@@ -271,13 +271,20 @@
         if (media.type === 'video') {
     const video = document.createElement('video');
     video.className = 'scene-video-bg';
-    video.dataset.src = media.src;      // بدل src العادي
+    video.dataset.src = media.src;
+
+    const shouldMute = media.muted !== false;      // false بس لو طالب الصوت
+    video.dataset.muted = shouldMute ? 'true' : 'false';
+    video.muted = shouldMute;
+    if (!shouldMute) video.removeAttribute('muted');
+
     video.loop = media.loop ?? false;
-    video.preload = 'none';             // بدل auto
+    video.preload = 'none';
+    video.autoplay = true;
     video.playsInline = true;
     video.setAttribute('playsinline', 'true');
-    video.muted = video.dataset?.muted !== 'false'; // خليه يبدأ mute
     if (media.poster) video.poster = media.poster;
+
     wrapper.appendChild(video);
 }
          else if (media.type === 'gradient') {
@@ -300,10 +307,16 @@
             if (item.type === 'video') {
     const video = document.createElement('video');
     video.dataset.src = item.src;
+
+    const shouldMute = item.muted !== false;
+    video.dataset.muted = shouldMute ? 'true' : 'false';
+    video.muted = shouldMute;
+    if (!shouldMute) video.removeAttribute('muted');
+
     video.loop = item.loop ?? true;
-    video.muted = video.dataset?.muted !== 'false';
-    video.playsInline = true;
+    video.autoplay = true;
     video.preload = 'none';
+    video.playsInline = true;
     figure.appendChild(video);
 } else {
     
