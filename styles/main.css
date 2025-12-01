@@ -15,7 +15,9 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
-
+.country-timeline {
+    display: none !important;
+}
 html, body {
     width: 100%;
     height: 100%;
