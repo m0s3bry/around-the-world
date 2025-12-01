@@ -1,0 +1,34 @@
+.particles {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.75);
+    animation: particleDrift var(--duration, 18s) linear infinite;
+    animation-delay: var(--delay, 0s);
+    opacity: 0;
+}
+
+@keyframes particleDrift {
+    0% { opacity: 0; transform: translate3d(var(--startX,0px), var(--startY,0px), 0) scale(0.6); }
+    10% { opacity: 0.75; }
+    50% { opacity: 1; transform: translate3d(calc(var(--startX, 0px) + var(--travelX, 0px)), calc(var(--startY, 0px) - var(--travelY, 0px)), 0) scale(1.1); }
+    90% { opacity: 0.2; }
+    100% { opacity: 0; transform: translate3d(calc(var(--startX, 0px) + var(--travelX, 0px)), calc(var(--startY, 0px) - var(--travelY, 0px)), 0) scale(0.8); }
+}
+
+.neon-flash {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    opacity: 0;
+    background: radial-gradient(circle, rgba(255,255,255,0.2), transparent 70%);
+    pointer-events: none;
+}

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Around the World - Immersive Show</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/animations.css">
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body class="overflow-hidden text-white">
+    <div class="global-backdrop">
+<img 
+    src="assets/ui/tv-logo.png" 
+    alt="Logo" 
+    onerror="this.classList.add('fallback'); this.alt='ATW';"
+    style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+        z-index: -1;"></div>
+
+    <div id="countdownScreen" class="countdown-screen hidden">
+        <div class="countdown-inner">
+            <div class="countdown-logo flex justify-center items-center">
+                <img src="assets/ui/tv-logo.png" alt="Logo" onerror="this.classList.add('fallback'); this.alt='ATW';">
+            </div>
+            <h1 class="countdown-title">Around the World</h1>
+            <p class="countdown-subtitle">The show will begin shortly</p>
+            <div class="countdown-timer">
+                <span id="countdownMinutes">05</span>
+                <span class="separator">:</span>
+                <span id="countdownSeconds">00</span>
+            </div>
+            <p class="countdown-instruction">Adjust the timer or jump right in.</p>
+            <div class="countdown-controls">
+                <button type="button" onclick="addTime(60)">+1 min</button>
+                <button type="button" onclick="subtractTime(60)">-1 min</button>
+                <button type="button" onclick="startNow()">Start now</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="cinematicIntro" class="cinematic-intro hidden">
+        <div class="intro-overlay">
+            <div class="intro-content">
+                <div class="intro-logo flex justify-center items-center">
+<img 
+    src="assets/backgrounds/global-streaks.jpg" 
+    alt="Logo" 
+    onerror="this.classList.add('fallback'); this.alt='ATW';"
+    style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+        z-index: -1;
+    "
+>
+                </div>
+                <div class="intro-text">
+                    <span class="live-dot">●</span>
+                    <span class="live-text">LIVE BROADCAST</span>
+                </div>
+                <h2 class="intro-title">Around the World</h2>
+                <p class="intro-tagline"></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="emergencyOverlay" class="emergency-overlay hidden">
+        <div class="emergency-content">
+            <div class="emergency-icon">⛔</div>
+            <h3>Presentation Paused</h3>
+            <p>Press resume or call EventController.resume()</p>
+            <button type="button" onclick="window.PresentationController?.resumeFromEmergency()">Resume presentation</button>
+        </div>
+    </div>
+
+    <div id="presentationRoot" class="presentation-root hidden">
+        <div class="backdrop-aurora">
+            <span class="aurora-layer layer-one"></span>
+            <span class="aurora-layer layer-two"></span>
+            <span class="aurora-layer layer-three"></span>
+        </div>
+        <div id="particles" class="particles"></div>
+        <div id="neonFlash" class="neon-flash"></div>
+        <div id="sceneContainer" class="scene-container"></div>
+        <div class="ui-overlay">
+            <div id="countryTimeline" class="country-timeline"></div>
+            <div id="pressHint" class="press-hint">Tap to start the journey</div>
+            <div id="progressOrb" class="progress-orb">
+                <svg viewBox="0 0 120 120">
+                    <circle class="orb-track" cx="60" cy="60" r="52"></circle>
+                    <circle class="orb-fill" cx="60" cy="60" r="52"></circle>
+                </svg>
+                <span id="orbLabel">0%</span>
+            </div>
+            <div id="soundboardPanel" class="soundboard-panel"></div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="scripts/effects.js"></script>
+    <script src="scripts/main.js"></script>
+    <script src="scripts/controller.js"></script>
+    
+    <script>
+document.addEventListener("countryChange", (e) => {
+    const country = e.detail?.code?.toLowerCase();
+    if (!country) return;
+
+    // Remove any previous country class
+    document.body.classList.forEach(cls => {
+        if (cls.startsWith("country-")) document.body.classList.remove(cls);
+    });
+
+    // Add new class to set background
+    document.body.classList.add(`country-${country}`);
+});
+</script>
+
+</body>
+</html>
