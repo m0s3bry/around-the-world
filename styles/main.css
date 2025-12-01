@@ -132,6 +132,14 @@ body {
     text-shadow: 0 0 45px rgba(92, 244, 255, 0.5);
     margin-bottom: 1.5rem;
 }
+.scene-video-bg,
+.gallery-item video {
+    transform: translateZ(0);
+}
+
+.scene:not(.active) video {
+    display: none !important;
+}
 
 .countdown-controls {
     display: flex;
