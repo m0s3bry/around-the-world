@@ -36,7 +36,9 @@ body {
     z-index: 0;
     pointer-events: none;
 }
-
+#presentationRoot {
+    touch-action: pan-y;
+}
 .global-backdrop .grid-layer {
     position: absolute;
     inset: 0;
