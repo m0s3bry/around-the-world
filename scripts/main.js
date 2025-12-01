@@ -269,18 +269,18 @@
         if (!media) return;
 
         if (media.type === 'video') {
-            const video = document.createElement('video');
-            video.className = 'scene-video-bg';
-            video.src = media.src;
-            video.loop = media.loop ?? false;
-            video.preload = 'auto';
-            video.playsInline = true;
-            video.setAttribute('playsinline', 'true');
-            video.muted = media.muted ?? false;
-            video.volume = typeof media.volume === 'number' ? media.volume : 1;
-            if (media.poster) video.poster = media.poster;
-            wrapper.appendChild(video);
-        } else if (media.type === 'gradient') {
+    const video = document.createElement('video');
+    video.className = 'scene-video-bg';
+    video.dataset.src = media.src;      // بدل src العادي
+    video.loop = media.loop ?? false;
+    video.preload = 'none';             // بدل auto
+    video.playsInline = true;
+    video.setAttribute('playsinline', 'true');
+    video.muted = media.muted ?? true;  // خليه يبدأ mute
+    if (media.poster) video.poster = media.poster;
+    wrapper.appendChild(video);
+}
+         else if (media.type === 'gradient') {
             wrapper.style.background = media.value;
         } else if (media.src) {
             wrapper.style.backgroundImage = `url('${media.src}')`;
@@ -298,16 +298,15 @@
             figure.className = 'gallery-item';
 
             if (item.type === 'video') {
-                const video = document.createElement('video');
-                video.src = item.src;
-                video.loop = item.loop ?? true;
-                video.muted = item.muted ?? true;
-                video.autoplay = item.autoplay ?? false;
-                video.playsInline = true;
-                video.setAttribute('playsinline', 'true');
-                if (item.poster) video.poster = item.poster;
-                figure.appendChild(video);
-            } else {
+    const video = document.createElement('video');
+    video.dataset.src = item.src;
+    video.loop = item.loop ?? true;
+    video.muted = true;
+    video.playsInline = true;
+    video.preload = 'none';
+    figure.appendChild(video);
+} else {
+    
                 const img = document.createElement('img');
                 img.src = item.src;
                 img.alt = item.caption || 'Gallery item';
@@ -504,7 +503,15 @@
     function activateScene(index) {
         if (state.isTransitioning || !state.scenes[index]) return;
         state.isTransitioning = true;
-
+        if (state.activeScene) {
+    const prevVideos = state.activeScene.element.querySelectorAll('video');
+    prevVideos.forEach(v => {
+        v.pause();
+        v.currentTime = 0;
+        v.removeAttribute('src');
+        v.load();
+    });
+}
         if (state.gameCleanup) {
             state.gameCleanup();
             state.gameCleanup = null;
@@ -523,17 +530,17 @@
         nextElement.classList.add('active');
 
         const video = nextElement.querySelector('.scene-video-bg');
-        if (video) {
-            video.currentTime = 0;
-            const playPromise = video.play();
-            if (playPromise) {
-                playPromise.catch(() => {
-                    video.muted = true;
-                    video.play().catch(() => {});
-                    setTimeout(() => { video.muted = false; }, 200);
-                });
-            }
-        }
+if (video && video.dataset.src && !video.src) {
+    video.src = video.dataset.src;
+    video.load();
+}
+if (video) {
+    video.currentTime = 0;
+    video.play().catch(() => {
+        video.muted = true;
+        video.play().catch(() => {});
+    });
+}
 
         state.activeScene = nextScene;
         state.currentIndex = index;
@@ -840,22 +847,22 @@ toggleGalleryVideos(nextElement, true); // شغّل الجاليري للمشه�
             restart: () => restartPresentation()
         };
     }
-    function toggleGalleryVideos(sceneElement, shouldPlay) {
+function toggleGalleryVideos(sceneElement, shouldPlay) {
     if (!sceneElement) return;
     const videos = sceneElement.querySelectorAll('.scene-gallery video');
+
     videos.forEach(video => {
-        if (shouldPlay && video.dataset.shouldAutoplay !== 'false') {
-            video.currentTime = 0;
-            const playPromise = video.play();
-            if (playPromise) {
-                playPromise.catch(() => {
-                    video.muted = true;
-                    video.play().catch(() => {});
-                });
+        if (shouldPlay) {
+            if (video.dataset.src && !video.src) {
+                video.src = video.dataset.src;
             }
+            video.currentTime = 0;
+            video.play().catch(() => {});
         } else {
             video.pause();
             video.currentTime = 0;
+            video.removeAttribute('src');
+            video.load();
         }
     });
 }
