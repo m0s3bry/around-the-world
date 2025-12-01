@@ -381,7 +381,7 @@ window.EVENT_CONFIG = {
                     audioType: 'ambient',
                     soundCue: 'suspense',
                     gallery: [
-                        { type: 'video', src: 'assets/countries/morocco/IMG_9986.mp4', loop: true, muted: true },
+                        { type: 'video', src: 'assets/countries/morocco/IMG_9986.MP4', loop: true, muted: true },
                     ]
                 },
                 {
@@ -640,3 +640,34 @@ window.EVENT_CONFIG = {
         }
     ]
 };
+let touchStartX = 0;
+let touchStartY = 0;
+
+tapTarget.addEventListener("touchstart", (event) => {
+    const touch = event.changedTouches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+}, { passive: true });
+
+tapTarget.addEventListener("touchend", (event) => {
+    const touch = event.changedTouches[0];
+    const deltaX = touch.clientX - touchStartX;
+    const deltaY = touch.clientY - touchStartY;
+
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        // سحب أفقي
+        if (deltaX < -swipeThreshold) {
+            goNextSlide();      // سحب لليسار -> التالي
+        } else if (deltaX > swipeThreshold) {
+            goPrevSlide();      // سحب لليمين -> السابق
+        }
+    } else {
+        // سحب رأسي (لو محتاج تستخدمه)
+    }
+}, { passive: true });
+const tapTarget = document.getElementById("presentationRoot");
+
+tapTarget.addEventListener("touchstart", (event) => {
+    event.preventDefault();
+    goNextSlide();
+}, { passive: false });
