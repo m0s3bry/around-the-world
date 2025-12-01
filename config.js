@@ -381,7 +381,7 @@ window.EVENT_CONFIG = {
                     audioType: 'ambient',
                     soundCue: 'suspense',
                     gallery: [
-                        { type: 'video', src: 'assets/countries/morocco/IMG_9986.MP4', loop: true, muted: true },
+                        { type: 'video', src: 'assets/countries/morocco/IMG_9986.mp4', loop: true, muted: true },
                     ]
                 },
                 {
