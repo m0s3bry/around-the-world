@@ -276,7 +276,7 @@
     video.preload = 'none';             // بدل auto
     video.playsInline = true;
     video.setAttribute('playsinline', 'true');
-    video.muted = media.muted ?? false;  // خليه يبدأ mute
+    video.muted = video.dataset?.muted !== 'false'; // خليه يبدأ mute
     if (media.poster) video.poster = media.poster;
     wrapper.appendChild(video);
 }
@@ -301,7 +301,7 @@
     const video = document.createElement('video');
     video.dataset.src = item.src;
     video.loop = item.loop ?? true;
-    video.muted = false;
+    video.muted = video.dataset?.muted !== 'false';
     video.playsInline = true;
     video.preload = 'none';
     figure.appendChild(video);
@@ -537,7 +537,7 @@ if (video && video.dataset.src && !video.src) {
 if (video) {
     video.currentTime = 0;
     video.play().catch(() => {
-        video.muted = false;
+        video.muted = video.dataset?.muted !== 'false';
         video.play().catch(() => {});
     });
 }
