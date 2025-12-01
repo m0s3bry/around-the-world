@@ -1,27 +1,44 @@
-(() => {
+document.addEventListener("DOMContentLoaded", () => {
     const target = document.getElementById("presentationRoot");
-    if (!target) return; // لو العنصر مش جاهز، منخرجش أي أخطاء
+    if (!target) {
+        console.warn("gestures.js: عنصر presentationRoot مش موجود.");
+        return;
+    }
+
+    const scene = document.getElementById("sceneContainer");
+    if (!scene) {
+        console.warn("gestures.js: عنصر sceneContainer مش موجود.");
+    }
 
     let startX = 0;
     let isPointerDown = false;
-    const swipeThreshold = 40; // أقل مسافة نعتبرها سحبة
-    const rotateStep = 6; // درجات التدوير للتأثير البصري
+    const swipeThreshold = 40;
+    const rotateStep = 6;
 
-    const scene = document.getElementById("sceneContainer");
+    const getClientX = (event) =>
+        event.clientX ??
+        event.touches?.[0]?.clientX ??
+        event.changedTouches?.[0]?.clientX ??
+        0;
 
     const handlePointerDown = (event) => {
         isPointerDown = true;
-        startX = event.clientX || event.touches?.[0]?.clientX || 0;
+        startX = getClientX(event);
+        console.log("pointerdown", startX);
     };
 
     const handlePointerUp = (event) => {
         if (!isPointerDown) return;
         isPointerDown = false;
 
-        const endX = event.clientX || event.changedTouches?.[0]?.clientX || 0;
+        const endX = getClientX(event);
         const deltaX = endX - startX;
+        console.log("pointerup", endX, "delta:", deltaX);
 
-        if (Math.abs(deltaX) < swipeThreshold) return;
+        if (Math.abs(deltaX) < swipeThreshold) {
+            console.log("سحبة قصيرة، تجاهل.");
+            return;
+        }
 
         const direction = deltaX > 0 ? "right" : "left";
         spinScene(direction);
@@ -38,15 +55,19 @@
 
         scene.dataset.rotation = nextRotation;
         scene.style.transform = `rotateY(${nextRotation}deg)`;
+        console.log("rotate", nextRotation);
     };
 
     const notifyController = (direction) => {
-        if (window.PresentationController) {
-            const method = direction === "right" ? "goNext" : "goPrev";
-            if (typeof window.PresentationController[method] === "function") {
-                window.PresentationController[method]();
-                return;
-            }
+        const method = direction === "right" ? "goNext" : "goPrev";
+
+        if (
+            window.PresentationController &&
+            typeof window.PresentationController[method] === "function"
+        ) {
+            window.PresentationController[method]();
+            console.log("PresentationController:", method);
+            return;
         }
 
         document.dispatchEvent(
@@ -54,10 +75,13 @@
                 detail: { direction }
             })
         );
+        console.log("dispatch swipeNavigation", direction);
     };
 
     target.addEventListener("pointerdown", handlePointerDown);
     target.addEventListener("pointerup", handlePointerUp);
+    target.addEventListener("pointerleave", () => (isPointerDown = false));
+
     target.addEventListener("touchstart", handlePointerDown, { passive: true });
     target.addEventListener("touchend", handlePointerUp);
-})();
+});
