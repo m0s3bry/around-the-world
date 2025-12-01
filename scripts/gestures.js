@@ -1,49 +1,65 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const tapTarget = document.getElementById('presentationRoot');
-    if (!tapTarget) return;
+    const tapTarget =
+        document.getElementById('presentationRoot') ||
+        document.querySelector('[data-presentation-root]');
+    if (!tapTarget) {
+        console.warn('gesture target not found');
+        return;
+    }
 
-    const swipeThreshold = 60;      // أقل مسافة أفقية علشان نعتبرها سحب
-    const verticalTolerance = 80;   // مسموح شوية حركة رأسية بسيطة
+    console.log('gestures ready'); // هتشوفها في الكونسول لما الملف يشتغل
+
+    const SWIPE_THRESHOLD = 60;
+    const VERTICAL_TOLERANCE = 80;
+
     let startX = 0;
     let startY = 0;
-    let moved = false;
+    let pointerDown = false;
 
-    tapTarget.addEventListener('touchstart', (event) => {
-        const touch = event.changedTouches[0];
-        startX = touch.clientX;
-        startY = touch.clientY;
-        moved = false;
-    }, { passive: true });
+    const handlePointerDown = (event) => {
+        pointerDown = true;
+        startX = event.clientX;
+        startY = event.clientY;
+    };
 
-    tapTarget.addEventListener('touchmove', (event) => {
-        const touch = event.changedTouches[0];
-        const deltaX = touch.clientX - startX;
-        const deltaY = touch.clientY - startY;
+    const handlePointerMove = (event) => {
+        if (!pointerDown) return;
+        const deltaX = event.clientX - startX;
+        const deltaY = event.clientY - startY;
 
-        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaY) < verticalTolerance) {
-            event.preventDefault(); // نوقف السحب الرأسي لما يكون السحب أفقي
+        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaY) < VERTICAL_TOLERANCE) {
+            event.preventDefault();
         }
-        moved = true;
-    }, { passive: false });
+    };
 
-    tapTarget.addEventListener('touchend', (event) => {
-        const touch = event.changedTouches[0];
-        const deltaX = touch.clientX - startX;
-        const deltaY = touch.clientY - startY;
+    const handlePointerUp = (event) => {
+        if (!pointerDown) return;
+        pointerDown = false;
 
-        const isHorizontal = Math.abs(deltaX) > Math.abs(deltaY);
-        const passedThreshold = Math.abs(deltaX) >= swipeThreshold;
-        const verticalOk = Math.abs(deltaY) < verticalTolerance;
+        const deltaX = event.clientX - startX;
+        const deltaY = event.clientY - startY;
 
-        if (isHorizontal && passedThreshold && verticalOk) {
+        const horizontal = Math.abs(deltaX) > Math.abs(deltaY);
+        const passed = Math.abs(deltaX) >= SWIPE_THRESHOLD;
+        const verticalOk = Math.abs(deltaY) < VERTICAL_TOLERANCE;
+
+        if (horizontal && passed && verticalOk) {
             if (deltaX < 0) {
-                window.PresentationController?.next();      // سحب لليسار → مشهد جديد
+                window.PresentationController?.next();
             } else {
-                window.PresentationController?.previous();  // سحب لليمين → المشهد السابق
+                window.PresentationController?.previous();
             }
-        } else if (!moved || (Math.abs(deltaX) < swipeThreshold && Math.abs(deltaY) < swipeThreshold)) {
-            // مجرد نقرة خفيفة = نفس سلوك الـ tap القديم (المشهد التالي)
+        } else if (Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10) {
             window.PresentationController?.next();
         }
-    }, { passive: true });
+    };
+
+    const handlePointerCancel = () => {
+        pointerDown = false;
+    };
+
+    tapTarget.addEventListener('pointerdown', handlePointerDown);
+    tapTarget.addEventListener('pointermove', handlePointerMove);
+    tapTarget.addEventListener('pointerup', handlePointerUp);
+    tapTarget.addEventListener('pointercancel', handlePointerCancel);
 });
