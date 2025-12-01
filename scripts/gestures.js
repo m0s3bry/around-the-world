@@ -2,8 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const tapTarget = document.getElementById('presentationRoot');
     if (!tapTarget) return;
 
-    const swipeThreshold = 60;   // المسافة الأفقية الدنيا (بالبكسل) لاعتبار الحركة سحب
-    const verticalTolerance = 80; // السماح بقدر بسيط من الحركة الرأسية
+    const swipeThreshold = 60;      // أقل مسافة أفقية علشان نعتبرها سحب
+    const verticalTolerance = 80;   // مسموح شوية حركة رأسية بسيطة
     let startX = 0;
     let startY = 0;
     let moved = false;
@@ -20,9 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const deltaX = touch.clientX - startX;
         const deltaY = touch.clientY - startY;
 
-        // لو الحركة أفقية أكتر من رأسية نمنع scroll ونعتبرها تفاعل presentation
         if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaY) < verticalTolerance) {
-            event.preventDefault();
+            event.preventDefault(); // نوقف السحب الرأسي لما يكون السحب أفقي
         }
         moved = true;
     }, { passive: false });
@@ -38,14 +37,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (isHorizontal && passedThreshold && verticalOk) {
             if (deltaX < 0) {
-                window.PresentationController?.next();
+                window.PresentationController?.next();      // سحب لليسار → مشهد جديد
             } else {
-                window.PresentationController?.previous();
+                window.PresentationController?.previous();  // سحب لليمين → المشهد السابق
             }
         } else if (!moved || (Math.abs(deltaX) < swipeThreshold && Math.abs(deltaY) < swipeThreshold)) {
-            // لو كان مجرد “طَقّة” خفيفة اعتبره tap للانتقال التالي
+            // مجرد نقرة خفيفة = نفس سلوك الـ tap القديم (المشهد التالي)
             window.PresentationController?.next();
         }
     }, { passive: true });
 });
-
