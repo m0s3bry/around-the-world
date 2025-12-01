@@ -106,7 +106,7 @@ body {
     width: 90%;
 }
 
-.countdown-logo img { width:186px; height:186px; margin-bottom: 1.4rem; }
+.countdown-logo img { width:86px; height:86px; margin-bottom: 0.4rem; }
 
 .countdown-title {
     font-family: var(--font-display);
