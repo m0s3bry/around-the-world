@@ -633,7 +633,7 @@ window.EVENT_CONFIG = {
                     audioType: 'ambient',
                     soundCue: 'suspense',
                     gallery: [
-                        { type: 'video', src: 'assets/countries/egypt/IMG_0734.MOV' }
+                        { type: 'video', src: 'assets/countries/egypt/IMG_0734.MOV',loop: true, muted: false }
                     ]
                 },
             ]
