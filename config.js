@@ -628,7 +628,7 @@ window.EVENT_CONFIG = {
                 {
                     id: 'eg-topic-201',
                     hideContent: true,
-                    media: { type: 'video', src: 'assets/countries/egypt/IMG_0734.MOV' },
+                    media: { type: 'video', src: 'assets/countries/egypt/IMG_0734.MOV',loop: true, muted: false },
                     audio: 'assets/audio/egypt/ambient.mp3',
                     audioType: 'ambient',
                     soundCue: 'suspense',
